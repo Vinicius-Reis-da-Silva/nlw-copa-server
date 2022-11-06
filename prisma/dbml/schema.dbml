@@ -1,0 +1,65 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Pool {
+  id String [pk]
+  title String [not null]
+  code String [unique, not null]
+  createAt DateTime [default: `now()`, not null]
+  ownerId String
+  participants Participant [not null]
+  owner User
+}
+
+Table Participant {
+  id String [pk]
+  userId String [not null]
+  poolId String [not null]
+  guesses Guess [not null]
+  user User [not null]
+  pool Pool [not null]
+
+  indexes {
+    (userId, poolId) [unique]
+  }
+}
+
+Table User {
+  id String [pk]
+  name String [not null]
+  email String [unique, not null]
+  avatarUrl String
+  createdAt DateTime [default: `now()`, not null]
+  participatingAt Participant [not null]
+  ownPool Pool [not null]
+}
+
+Table Game {
+  id String [pk]
+  date DateTime [not null]
+  firstTeamCountryCode String [not null]
+  secondTeamCountryCode String [not null]
+  guesses Guess [not null]
+}
+
+Table Guess {
+  id String [pk]
+  firstTeamPoints Int [not null]
+  secondTeamPoints Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  gameId String [not null]
+  participant Participant [not null]
+  game Game [not null]
+  participantId String [not null]
+}
+
+Ref: Pool.ownerId > User.id
+
+Ref: Participant.userId > User.id
+
+Ref: Participant.poolId > Pool.id
+
+Ref: Guess.participantId > Participant.id
+
+Ref: Guess.gameId > Game.id
